@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
+import random
+import numpy as np
 
-question1 = "You see a file named devices.txt. Which commands are valid for this file type?"
-
-correct_answers1 = {
-    '1': 'mv',
-    '2': 'cp',
-    '3': 'rm',
-    '4': 'chmod',
-    '5': 'touch'
+level1 = {
+    'question' : 'You see a file named devices.txt. Which commands are valid for this file type?',
+    'correct_answers' : ['mv', 'cp', 'rm', 'chmod', 'touch'],
+    'wrong_answers' : ['rmdir', 'cd', 'pwd']
 }
 
-wrong_answers1 = {
-    '1': 'rmdir',
-    '2': 'cd',
-    '3': 'pwd'
-}
+def answer_shuffle(level, dim):
+    all_answers = np.array(level['correct_answers'] + level['wrong_answers'])
+    random.shuffle(all_answers)
+    all_answers = np.insert(all_answers, 4, 'Start')
+    all_answers = np.reshape(all_answers, (dim,dim))
+    return all_answers
