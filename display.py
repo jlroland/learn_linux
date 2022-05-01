@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import pygame as pg
-import numpy as np
 import questions as qs    # contains questions, answers, shuffle function
 pg.init()
 
@@ -13,13 +13,12 @@ black = 0, 0, 0
 white = 255, 255, 255
 red = 255, 0, 0
 green = 0, 255, 0
-
 screen = pg.display.set_mode((width, height))
 
 # set up player image and positioning
-player = pg.image.load("./monster.png")
-player_rect = player.get_rect()
-player_pos = [width/2, height/2]
+image = pg.image.load("./monster.png")
+player = pg.transform.scale(image, (width/(grid_size *2), height/grid_size))
+player_pos = [width/2, height/3]
 dist = width/grid_size
 
 # create randomized answer matrix to display on grid
@@ -48,9 +47,9 @@ def select_answer():
         j = 1
     elif player_pos[0] == 500:
         j = 2
-    if player_pos[1] == 300:
+    if player_pos[1] == 200:
         i = 1
-    elif player_pos[1] == 500:
+    elif player_pos[1] == 400:
         i = 2
     chosen_answer = answers[j,i]
 
@@ -68,59 +67,91 @@ def select_answer():
             penalty_switch =1
         else:
             win_switch =1
+def main():
+    while 1:
+        screen.fill(black)
+        # draw grid and display answers
+        for i in range(grid_size):
+            for j in range(grid_size):
+                grid_box = pg.Rect(i*width/grid_size, j*height/grid_size, width/grid_size, height/grid_size)
+                pg.draw.rect(screen, white, grid_box, 1)
+                font = pg.font.Font(None, 28)
+                text = font.render(answers[i,j], True, white)
+                screen.blit(text, ((grid_box.centerx - 20), grid_box.centery))
+        
+        # display question at top of screen
+        length = int(len(qs.level1['question']))
+        mid = qs.level1['question'].find(' ', int(length/2))
+        line1 = qs.level1['question'][0:mid]
+        line2 = qs.level1['question'][(mid+1): length]
+        font = pg.font.Font(None, 28)
+        text1 = font.render(line1, True, black)
+        text2 = font.render(line2, True, black)
+        textpos1 = text1.get_rect(centerx=screen.get_width() / 2, y=10)
+        textpos2 = text2.get_rect(centerx=screen.get_width() / 2, y=2 * font.get_height())
+        screen.fill(white, textpos1)
+        screen.fill(white, textpos2)
+        screen.blit(text1, textpos1)
+        screen.blit(text2, textpos2)
 
-while 1:
-    # define actions to take with different keys
-    for event in pg.event.get():
-        if event.type == pg.QUIT: 
-            sys.exit()
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_UP and player_pos[1] > 200:
-                player_pos[1] -= dist
-            if event.key == pg.K_DOWN and player_pos[1] < 500:
-                player_pos[1] += dist
-            if event.key == pg.K_LEFT and player_pos[0] > 200:
-                player_pos[0] -= dist
-            if event.key == pg.K_RIGHT and player_pos[0] < 500:
-                player_pos[0] += dist
-            if event.key == pg.K_SPACE:
-                select_answer()
+        # define actions to take with different keys
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                raise SystemExit
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_UP and player_pos[1] > 0:
+                    player_pos[1] -= dist
+                if event.key == pg.K_DOWN and player_pos[1] < 400:
+                    player_pos[1] += dist
+                if event.key == pg.K_LEFT and player_pos[0] > 200:
+                    player_pos[0] -= dist
+                if event.key == pg.K_RIGHT and player_pos[0] < 500:
+                    player_pos[0] += dist
+                if event.key == pg.K_SPACE:
+                    select_answer()
+                #print(player_pos)
 
-    screen.fill(black)
-    
-    # display question at top of screen
-    font = pg.font.Font(None, 24)
-    text = font.render(qs.level1['question'], True, white)
-    textpos = text.get_rect(centerx=screen.get_width() / 2, y=10)
-    screen.blit(text, textpos)
+        # display message if player loses
+        if penalty > 1 or penalty_switch == 1:
+            end_font = pg.font.Font(None, 72)
+            end_text = end_font.render("GAME OVER", True, red)
+            end_textpos = end_text.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()/2)
+            # tell player which keys to press to restart or exit
+            end_font2 = pg.font.Font(None, 40)
+            end_text2 = end_font2.render("Press ENTER to restart or q to quit", True, red)
+            end_textpos2 = end_text2.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()*0.75)
+            screen.blit(end_text, end_textpos)
+            screen.blit(end_text2, end_textpos2)
 
-    # draw grid and display answers
-    for i in range(grid_size):
-        for j in range(grid_size):
-            grid_box = pg.Rect(i*width/grid_size, j*height/grid_size, width/grid_size, height/grid_size)
-            pg.draw.rect(screen, white, grid_box, 1)
-            font = pg.font.Font(None, 28)
-            text = font.render(answers[i,j], True, white)
-            screen.blit(text, grid_box.center)
+        # display message if player wins
+        if win_switch == 1:
+            end_font = pg.font.Font(None, 72)
+            end_text = end_font.render("YOU'RE A WINNER!", True, green)
+            end_textpos = end_text.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()/2)
+            # tell player which keys to press to restart or exit
+            end_font2 = pg.font.Font(None, 40)
+            end_text2 = end_font2.render("Press ENTER to restart or q to quit", True, green)
+            end_textpos2 = end_text2.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()*0.75)
+            screen.blit(end_text, end_textpos)
+            screen.blit(end_text2, end_textpos2)
 
-    # display message if player loses
-    if penalty > 1 or penalty_switch == 1:
-        end_font = pg.font.Font(None, 72)
-        end_text = end_font.render("GAME OVER", True, red)
-        end_textpos = end_text.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()/2)
-        screen.blit(end_text, end_textpos)
-    
-    # display message if player wins
-    if win_switch == 1:
-        end_font = pg.font.Font(None, 72)
-        end_text = end_font.render("YOU'RE A WINNER!", True, green)
-        end_textpos = end_text.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()/2)
-        screen.blit(end_text, end_textpos)
+        screen.blit(player, player_pos)
+        pg.display.flip()
 
-    screen.blit(player, player_pos)
-    pg.display.flip()
+        #end game when player wins or loses
+        if penalty > 1 or penalty_switch == 1 or win_switch:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    raise SystemExit
+                if event.type == pg.KEYDOWN:
+                    # restart game if player presses ENTER
+                    if event.key == pg.K_RETURN:
+                        os.execv(sys.argv[0], sys.argv)
+                    # quit game & close window if player presses 'q'
+                    if event.key == pg.K_q:
+                        pg.quit()
+                        sys.exit()
+                        
 
-    # ends game when player wins or loses
-    if penalty > 1 or penalty_switch == 1 or win_switch:
-        pg.event.clear(eventtype=pg.KEYDOWN)  
-
+if __name__ == '__main__':
+    main()

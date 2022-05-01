@@ -8,6 +8,7 @@ level1 = {
     'wrong_answers' : ['rmdir', 'cd', 'pwd']
 }
 
+#print(level1['question'].count(' '))
 def answer_shuffle(level, dim):
     all_answers = np.array(level['correct_answers'] + level['wrong_answers'])
     random.shuffle(all_answers)
