@@ -6,6 +6,7 @@ import pygame as pg
 import questions as qs    # contains questions, answers, shuffle function
 pg.init()
 
+
 # basic display setup
 width, height = 600, 600
 grid_size = 3
@@ -14,9 +15,12 @@ white = 255, 255, 255
 red = 255, 0, 0
 green = 0, 255, 0
 screen = pg.display.set_mode((width, height))
+pg.display.set_caption('Linux Chompers')
+
 
 # set up player image and positioning
 image = pg.image.load("./monster.png")
+pg.display.set_icon(image)
 player = pg.transform.scale(image, (width/(grid_size *2), height/grid_size))
 player_pos = [width/2, height/3]
 dist = width/grid_size
@@ -26,7 +30,6 @@ answers = qs.answer_shuffle(qs.level1, grid_size)
 
 # to track game progress
 score = 0
-penalty = 0
 penalty_switch = 0
 win_switch = 0
 
@@ -35,7 +38,6 @@ def select_answer():
     
     # need to manipulate globally to trigger events
     global score
-    global penalty
     global penalty_switch
     global win_switch
 
@@ -60,13 +62,13 @@ def select_answer():
         answers[j,i] = ''
     elif chosen_answer in qs.level1["wrong_answers"]:
         answers[j,i] = ''
-        penalty += 1
+        penalty_switch = 1
     elif chosen_answer == 'End':
         check_answers = set(answers.flatten()).intersection(set(qs.level1["correct_answers"]))
         if check_answers:
-            penalty_switch =1
+            penalty_switch = 1
         else:
-            win_switch =1
+            win_switch = 1
 def main():
     while 1:
         screen.fill(black)
@@ -112,7 +114,7 @@ def main():
                 #print(player_pos)
 
         # display message if player loses
-        if penalty > 1 or penalty_switch == 1:
+        if penalty_switch:
             end_font = pg.font.Font(None, 72)
             end_text = end_font.render("GAME OVER", True, red)
             end_textpos = end_text.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()/2)
@@ -124,7 +126,7 @@ def main():
             screen.blit(end_text2, end_textpos2)
 
         # display message if player wins
-        if win_switch == 1:
+        if win_switch:
             end_font = pg.font.Font(None, 72)
             end_text = end_font.render("YOU'RE A WINNER!", True, green)
             end_textpos = end_text.get_rect(centerx=screen.get_width()/2, centery=screen.get_height()/2)
@@ -139,7 +141,7 @@ def main():
         pg.display.flip()
 
         #end game when player wins or loses
-        if penalty > 1 or penalty_switch == 1 or win_switch:
+        if penalty_switch or win_switch:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     raise SystemExit
