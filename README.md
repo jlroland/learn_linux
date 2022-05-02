@@ -8,7 +8,9 @@ While trying to learn Linux commands, I thought a game would be helpful in the l
 
 Once the display module has been launched from the command line, the player will see a screen pop up.  The screen will contain a 3x3 grid with a monster in the "Start" box in the middle of the screen.  The surrounding boxes will contain possible answers to a question that is displayed at the top of the screen.  The objective of the game is to select all correct answers by using the monster to chomp them.  
 
-![Screenshot of game at start](/game_start.png)  
+<p align="center">
+  <img src="/game_start.png" alt="Screenshot of game at start" align="center" width=50% title="Linux Chompers">  
+</p>
 
 The monster can be moved around the screen using arrow keys.  To make the monster chomp an answer, use the spacebar. The first time an answer is selected, the "Start" box turns into the "End" box.  After the player has selected all correct answers, they need to move to the "End" box and tap the spacebar to find out if they win or lose.  If the player selects an incorrect answer, they automatically lose and they are given the option to quit (press q) or restart the game (press ENTER).  
 
