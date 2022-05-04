@@ -8,7 +8,7 @@ pg.init()
 
 
 # basic display setup
-width, height = 600, 600
+width, height = 700, 700
 grid_size = 3
 black = 0, 0, 0
 white = 255, 255, 255
@@ -35,13 +35,13 @@ def select_answer(level):
 
     # translate screen position into indices for answer matrix
     i, j = 0, 0
-    if player_pos[0] == 300:
+    if player_pos[0] >= int(width/2) and player_pos[0] <= int(width/2)+1:
         j = 1
-    elif player_pos[0] == 500:
+    if player_pos[0] >= int(width*5/6):
         j = 2
-    if player_pos[1] == 200:
+    if player_pos[1] >= int(height/grid_size) and player_pos[1] <= int(height/grid_size)+1:
         i = 1
-    elif player_pos[1] == 400:
+    if player_pos[1] >= int(2*height/grid_size):
         i = 2
     chosen_answer = answers[i,j]
 
@@ -69,7 +69,7 @@ def main(level):
             for j in range(grid_size):
                 grid_box = pg.Rect(i*width/grid_size, j*height/grid_size, width/grid_size, height/grid_size)
                 pg.draw.rect(screen, white, grid_box, 1)
-                font = pg.font.Font(None, 28)
+                font = pg.font.Font(None, 30)
                 text = font.render(answers[j,i], True, white)
                 screen.blit(text, ((grid_box.centerx - 20), grid_box.centery))
         
@@ -78,7 +78,7 @@ def main(level):
         mid = qs.levels[level]['question'].find(' ', int(length/2))
         line1 = qs.levels[level]['question'][0:mid]
         line2 = qs.levels[level]['question'][(mid+1): length]
-        font = pg.font.Font(None, 28)
+        font = pg.font.Font(None, 30)
         text1 = font.render(line1, True, black)
         text2 = font.render(line2, True, black)
         textpos1 = text1.get_rect(centerx=screen.get_width() / 2, y=10)
@@ -104,7 +104,7 @@ def main(level):
                     player_pos[0] += dist
                 if event.key == pg.K_SPACE:
                     select_answer(level)
-
+            
         # display message if player loses
         if penalty_switch:
             end_font = pg.font.Font(None, 72)
