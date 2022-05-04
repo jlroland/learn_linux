@@ -72,7 +72,7 @@ def main(level):
                 font = pg.font.Font(None, 30)
                 text = font.render(answers[j,i], True, white)
                 screen.blit(text, ((grid_box.centerx - 20), grid_box.centery))
-        
+                print(answers)
         # display question at top of screen
         length = int(len(qs.levels[level]['question']))
         mid = qs.levels[level]['question'].find(' ', int(length/2))
@@ -166,7 +166,6 @@ def main(level):
 if __name__ == '__main__':
     level_index = 0
     while level_index < len(qs.levels):
-        score = 0
         penalty_switch = 0
         win_switch = 0
 

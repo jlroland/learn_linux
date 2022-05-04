@@ -23,3 +23,4 @@ Some of the ideas I've had regarding game development have been set aside for no
 * Re-factor the code to make it scale to a variety of screen sizes
 * Add several more levels    
 * Incorporate sprite animation to show the monster chomping on the answers  
+* Customize the display to make it more appealing (make it pop)  
